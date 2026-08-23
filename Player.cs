@@ -119,9 +119,8 @@ public class Player
         bool upperWater = waterState.upperWater;
 
         // Som de entrar na água
-        // TODO: substituir splash.ogg por arquivo com licença aberta (CC0/CC-BY)
         if (inWater && !_wasInWater)
-            MonoCraft.Entities.Rendering.SoundManager.Play("splash", 0.5f);
+            MonoCraft.Entities.Rendering.SoundManager.Play("default_water_footstep.1", 0.5f);
         _wasInWater = inWater;
 
         bool sprint =
@@ -185,10 +184,13 @@ public class Player
             if (_distanceMoved > 1.5f)
             {
                 _distanceMoved = 0;
-                // TODO: substituir grass1.ogg por arquivo com licença aberta (CC0/CC-BY)
                 // Varia levemente o pitch para não ficar monótono
                 float pitch = (float)(new Random().NextDouble() * 0.2 - 0.1);
-                MonoCraft.Entities.Rendering.SoundManager.Play("grass1", 0.4f, pitch);
+                MonoCraft.Entities.Rendering.SoundManager.Play(
+                    "default_grass_footstep.1",
+                    0.4f,
+                    pitch
+                );
             }
         }
         else
@@ -282,10 +284,10 @@ public class Player
         int maxZ = (int)MathF.Floor(pos.Z + half);
 
         for (int x = minX; x <= maxX; x++)
-            for (int y = minY; y <= maxY; y++)
-                for (int z = minZ; z <= maxZ; z++)
-                    if (_world.IsSolid(x, y, z))
-                        return true;
+        for (int y = minY; y <= maxY; y++)
+        for (int z = minZ; z <= maxZ; z++)
+            if (_world.IsSolid(x, y, z))
+                return true;
 
         return false;
     }

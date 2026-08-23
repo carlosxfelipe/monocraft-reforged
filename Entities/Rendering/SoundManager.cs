@@ -12,9 +12,8 @@ public static class SoundManager
 
     public static void Initialize(string basePath)
     {
-        // TODO: substituir por arquivos com licença aberta (CC0/CC-BY)
-        LoadOgg(basePath, "grass1");
-        LoadOgg(basePath, "splash");
+        LoadOgg(basePath, "default_grass_footstep.1");
+        LoadOgg(basePath, "default_water_footstep.1");
     }
 
     private static void LoadOgg(string basePath, string name)
