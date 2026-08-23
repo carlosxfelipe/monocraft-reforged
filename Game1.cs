@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input.Touch;
 using MonoCraft.Entities;
 using MonoCraft.Entities.Rendering;
 using MonoCraft.World;
-#if ANDROID
+#if ANDROID && !IOS
 using Android.App;
 #endif
 
@@ -157,10 +157,13 @@ public class Game1 : Game
 
         _virtualGamepad = new VirtualGamepad(_pixel);
 
-#if ANDROID
+#if ANDROID && !IOS
         SoundManager.Initialize(
             Path.Combine(Application.Context.FilesDir.AbsolutePath, "Content", "sounds")
         );
+#elif IOS
+        // No iOS os BundleResources ficam no diretório do bundle, acessível diretamente
+        SoundManager.Initialize(Path.Combine(Foundation.NSBundle.MainBundle.BundlePath, "Content", "sounds"));
 #else
         SoundManager.Initialize("Content/sounds");
 #endif
@@ -312,7 +315,14 @@ public class Game1 : Game
                 )
             )
             {
+#if IOS
+                _isMainMenuOpen = true;
+                _isExitMenuOpen = false;
+                _mouseCaptured = false;
+                IsMouseVisible = true;
+#else
                 Exit();
+#endif
             }
 
             if (

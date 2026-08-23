@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-ios</TargetFramework>
+    <ApplicationId>com.monocraft.game</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
+    <Nullable>disable</Nullable>
+    <RuntimeIdentifiers>ios-arm64;iossimulator-arm64;iossimulator-x64</RuntimeIdentifiers>
+    <!-- Define IOS para que os blocos #if ANDROID possam incluir iOS -->
+    <DefineConstants>$(DefineConstants);IOS;ANDROID</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.iOS" Version="3.8.*" />
+    <PackageReference Include="NVorbis" Version="0.10.5" />
+  </ItemGroup>
+
+  <!-- Código compartilhado com o projeto desktop (linked) -->
+  <ItemGroup>
+    <Compile
+      Include="../**/*.cs"
+      Exclude="../MonoCraft.Android/**;../MonoCraft.iOS/**;../obj/**;../bin/**;../Program.cs" />
+  </ItemGroup>
+
+  <!-- Assets do jogo como BundleResource (ficam no .app bundle, acessíveis via caminhos normais) -->
+  <ItemGroup>
+    <BundleResource Include="../Content/packs/**/*">
+      <Link>Content/packs/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </BundleResource>
+    <BundleResource Include="../Content/sounds/**/*">
+      <Link>Content/sounds/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </BundleResource>
+  </ItemGroup>
+</Project>

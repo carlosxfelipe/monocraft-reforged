@@ -28,6 +28,14 @@ Você também pode adicionar a flag `--debug` para compilar em modo de depuraç�
 ./scripts/build-android.sh --sign
 ```
 
+Para compilar e lançar no simulador iOS (requer macOS + Xcode):
+
+```bash
+dotnet build -t:Run -f net10.0-ios MonoCraft.iOS/MonoCraft.iOS.csproj
+```
+
+> **Nota:** Para rodar em dispositivo físico iOS é necessário uma conta Apple Developer e um Provisioning Profile configurado.
+
 ## Controles e Comandos
 
 ### Movimentação e Câmera
