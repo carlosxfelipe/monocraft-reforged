@@ -184,13 +184,17 @@ public class Player
             if (_distanceMoved > 1.5f)
             {
                 _distanceMoved = 0;
+
+                int bX = (int)MathF.Floor(Position.X);
+                int bY = (int)MathF.Floor(Position.Y - 0.1f);
+                int bZ = (int)MathF.Floor(Position.Z);
+                var blockUnder = _world.GetBlock(bX, bY, bZ);
+
+                string soundName = GetFootstepSound(blockUnder);
+
                 // Varia levemente o pitch para não ficar monótono
                 float pitch = (float)(new Random().NextDouble() * 0.2 - 0.1);
-                MonoCraft.Entities.Rendering.SoundManager.Play(
-                    "default_grass_footstep.1",
-                    0.4f,
-                    pitch
-                );
+                MonoCraft.Entities.Rendering.SoundManager.Play(soundName, 0.4f, pitch);
             }
         }
         else
@@ -302,6 +306,20 @@ public class Player
             && y < Position.Y + PlayerHeight
             && z + 1 > Position.Z - half
             && z < Position.Z + half;
+    }
+
+    private string GetFootstepSound(BlockType blockType)
+    {
+        return blockType switch
+        {
+            BlockType.Sand => "default_sand_footstep.1",
+            BlockType.Stone or BlockType.Bedrock => "default_stone_footstep.1",
+            BlockType.Wood => "default_wood_footstep.1",
+            BlockType.Snow => "default_snow_footstep.1",
+            BlockType.Dirt => "default_dirt_footstep.1",
+            BlockType.Leaves => "default_grass_footstep.1",
+            _ => "default_grass_footstep.1", // Padrao (grass, air, unknown)
+        };
     }
 
     private (bool inWater, bool upperWater) GetWaterState()

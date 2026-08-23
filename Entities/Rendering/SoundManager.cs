@@ -14,6 +14,11 @@ public static class SoundManager
     {
         LoadOgg(basePath, "default_grass_footstep.1");
         LoadOgg(basePath, "default_water_footstep.1");
+        LoadOgg(basePath, "default_dirt_footstep.1");
+        LoadOgg(basePath, "default_stone_footstep.1");
+        LoadOgg(basePath, "default_sand_footstep.1");
+        LoadOgg(basePath, "default_wood_footstep.1");
+        LoadOgg(basePath, "default_snow_footstep.1");
     }
 
     private static void LoadOgg(string basePath, string name)
