@@ -1,0 +1,5 @@
+{
+    "terminal.integrated.env.linux": {
+        "DOTNET_CLI_UI_LANGUAGE": "en-US"
+    }
+}

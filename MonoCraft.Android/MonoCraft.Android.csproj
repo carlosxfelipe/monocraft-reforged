@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <ApplicationId>com.monocraft.game</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <SupportedOSPlatformVersion>33</SupportedOSPlatformVersion>
+    <Nullable>disable</Nullable>
+    <RuntimeIdentifiers>android-arm;android-arm64;android-x64;android-x86</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.Android" Version="3.8.*" />
+    <PackageReference Include="NVorbis" Version="0.10.5" />
+  </ItemGroup>
+
+  <!-- Código compartilhado com o projeto desktop (linked) -->
+  <ItemGroup>
+    <Compile
+      Include="../**/*.cs"
+      Exclude="../MonoCraft.Android/**;../obj/**;../bin/**;../Program.cs"
+    />
+  </ItemGroup>
+
+  <!-- Pack files copiados como Android Assets -->
+  <ItemGroup>
+    <AndroidAsset Include="../Content/packs/**/*">
+      <Link>Content/packs/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="../Content/sounds/**/*">
+      <Link>Content/sounds/%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </AndroidAsset>
+  </ItemGroup>
+</Project>

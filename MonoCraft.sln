@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoCraft", "MonoCraft.csproj", "{FE4C294E-A0F5-4AB7-8D31-8E969E996291}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoCraft.Android", "MonoCraft.Android\MonoCraft.Android.csproj", "{06D249B5-A96E-44C5-8DD0-2D4A0BE984FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE4C294E-A0F5-4AB7-8D31-8E969E996291}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE4C294E-A0F5-4AB7-8D31-8E969E996291}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE4C294E-A0F5-4AB7-8D31-8E969E996291}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE4C294E-A0F5-4AB7-8D31-8E969E996291}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06D249B5-A96E-44C5-8DD0-2D4A0BE984FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06D249B5-A96E-44C5-8DD0-2D4A0BE984FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06D249B5-A96E-44C5-8DD0-2D4A0BE984FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06D249B5-A96E-44C5-8DD0-2D4A0BE984FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
