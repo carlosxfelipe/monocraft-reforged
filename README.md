@@ -13,7 +13,7 @@ dotnet run
 Para compilar e lançar diretamente no emulador Android conectado, utilize o comando:
 
 ```bash
-dotnet build -t:Run -f net8.0-android MonoCraft.Android/MonoCraft.Android.csproj
+dotnet build -t:Run -f net10.0-android MonoCraft.Android/MonoCraft.Android.csproj
 ```
 
 Para compilar a versão para Android e gerar o APK (salvo na pasta `releases/android/`), utilize o script de build:
