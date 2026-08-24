@@ -163,7 +163,9 @@ public class Game1 : Game
         );
 #elif IOS
         // No iOS os BundleResources ficam no diretório do bundle, acessível diretamente
-        SoundManager.Initialize(Path.Combine(Foundation.NSBundle.MainBundle.BundlePath, "Content", "sounds"));
+        SoundManager.Initialize(
+            Path.Combine(Foundation.NSBundle.MainBundle.BundlePath, "Content", "sounds")
+        );
 #else
         SoundManager.Initialize("Content/sounds");
 #endif
@@ -710,6 +712,7 @@ public class Game1 : Game
         _effect.World = Matrix.Identity;
 
         _world.Draw(GraphicsDevice, _effect, _player.EyePosition, () => { });
+        _entities.Draw(_effect);
 
         DrawHud();
 
