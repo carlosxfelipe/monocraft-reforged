@@ -33,6 +33,9 @@ public class Game1 : Game
     private bool _takeScreenshot = false;
     private bool _isMainMenuOpen = true;
     private bool _isExitMenuOpen = false;
+    private Hand _hand;
+    private bool _hasSelectedSkin = false;
+    private bool _skinMenuOpen = false;
     private TextRenderer _textRenderer;
 
     private int _selectedHotbarIndex = 0;
@@ -139,6 +142,7 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
+        _hand = new Hand(new Color(222, 170, 128));
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _entities.LoadContent(GraphicsDevice);
 
@@ -238,13 +242,16 @@ public class Game1 : Game
         if (_isMainMenuOpen)
         {
             bool touchStart = false;
+            int cx = 0, cy = 0;
 
             if (
                 mouse.LeftButton == ButtonState.Pressed
                 && _prevMouse.LeftButton == ButtonState.Released
             )
             {
-                if (GetStartButtonRect().Contains(mouse.Position))
+                cx = mouse.X;
+                cy = mouse.Y;
+                if (!_skinMenuOpen && GetStartButtonRect().Contains(mouse.Position))
                     touchStart = true;
             }
 
@@ -256,12 +263,33 @@ public class Game1 : Game
             {
                 if (touch.State == TouchLocationState.Pressed)
                 {
-                    if (GetStartButtonRect().Contains(touch.Position))
+                    cx = (int)touch.Position.X;
+                    cy = (int)touch.Position.Y;
+                    if (!_skinMenuOpen && GetStartButtonRect().Contains(touch.Position))
                         touchStart = true;
                 }
             }
 
-            if (
+            if (_skinMenuOpen && (mouse.LeftButton == ButtonState.Pressed && _prevMouse.LeftButton == ButtonState.Released || TouchPanel.GetState().Count > 0))
+            {
+                var colors = GetSkinColors();
+                var rects = GetSkinButtonRects();
+                for (int i = 0; i < rects.Length; i++)
+                {
+                    if (rects[i].Contains(cx, cy))
+                    {
+                        _hand = new Hand(colors[i]);
+                        _hasSelectedSkin = true;
+                        _skinMenuOpen = false;
+                        _isMainMenuOpen = false;
+                        _mouseCaptured = true;
+                        IsMouseVisible = false;
+                        CenterMouse();
+                        break;
+                    }
+                }
+            }
+            else if (
                 touchStart
                 || (keyboard.IsKeyDown(Keys.Enter) && _prevKeyboard.IsKeyUp(Keys.Enter))
                 || (
@@ -270,10 +298,17 @@ public class Game1 : Game
                 )
             )
             {
-                _isMainMenuOpen = false;
-                _mouseCaptured = true;
-                IsMouseVisible = false;
-                CenterMouse();
+                if (!_hasSelectedSkin)
+                {
+                    _skinMenuOpen = true;
+                }
+                else
+                {
+                    _isMainMenuOpen = false;
+                    _mouseCaptured = true;
+                    IsMouseVisible = false;
+                    CenterMouse();
+                }
             }
         }
         else if (_isExitMenuOpen)
@@ -441,6 +476,7 @@ public class Game1 : Game
                     var broken = _world.GetBlock(hit.X, hit.Y, hit.Z);
                     if (broken != BlockType.Bedrock)
                     {
+                        _hand.Swing();
                         _world.SetBlock(hit.X, hit.Y, hit.Z, BlockType.Air);
                         AddToInventory(BlockInfo.GetDrop(broken));
                     }
@@ -479,7 +515,10 @@ public class Game1 : Game
                         && BlockInfo.IsReplaceable(_world.GetBlock(px, py, pz))
                         && TryConsumeSelectedHotbarSlot(out var placedType)
                     )
+                    {
+                        _hand.Swing();
                         _world.SetBlock(px, py, pz, placedType);
+                    }
                 }
             }
 
@@ -511,6 +550,8 @@ public class Game1 : Game
         }
 
         _entities.Update(dt, _player.Position);
+
+        _hand.Update(dt, _player.HorizontalSpeed, _player.OnGround, new Vector2(mouseDeltaX, mouseDeltaY), _inventory[_selectedHotbarIndex].Type);
 
         _world.EnsureChunksAround(_player.Position);
         _world.RebuildDirtyMeshes(GraphicsDevice);
@@ -714,6 +755,8 @@ public class Game1 : Game
         _world.Draw(GraphicsDevice, _effect, _player.EyePosition, () => { });
         _entities.Draw(_effect);
 
+        _hand.Draw(GraphicsDevice, _effect);
+
         DrawHud();
 
         base.Draw(gameTime);
@@ -760,43 +803,67 @@ public class Game1 : Game
             int subtitleScale = Math.Max(1, titleScale / 2);
             int textScale = Math.Max(1, titleScale / 3);
 
-            string title = "MonoCraft";
-            int titleWidth = title.Length * 4 * titleScale;
-            _textRenderer.DrawString(
-                _spriteBatch,
-                title,
-                cx - titleWidth / 2,
-                cy - titleScale * 20,
-                titleScale,
-                Color.White
-            );
+            if (_skinMenuOpen)
+            {
+                string title = "CHOOSE YOUR SKIN COLOR";
+                int titleWidth = title.Length * 4 * subtitleScale;
+                _textRenderer.DrawString(
+                    _spriteBatch,
+                    title,
+                    cx - titleWidth / 2,
+                    cy - titleScale * 8,
+                    subtitleScale,
+                    Color.White
+                );
 
-            string subtitle = "START NEW GAME";
-            int subtitleWidth = subtitle.Length * 4 * subtitleScale;
-            var startRect = GetStartButtonRect();
+                var colors = GetSkinColors();
+                var rects = GetSkinButtonRects();
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    _spriteBatch.Draw(_pixel, rects[i], colors[i]);
+                    DrawRectOutline(new Rectangle(rects[i].X - 2, rects[i].Y - 2, rects[i].Width + 4, rects[i].Height + 4), 2, Color.White);
+                }
+            }
+            else
+            {
+                string title = "MonoCraft";
+                int titleWidth = title.Length * 4 * titleScale;
+                _textRenderer.DrawString(
+                    _spriteBatch,
+                    title,
+                    cx - titleWidth / 2,
+                    cy - titleScale * 20,
+                    titleScale,
+                    Color.White
+                );
 
-            _spriteBatch.Draw(_pixel, startRect, Color.DarkGreen);
+                string subtitle = _hasSelectedSkin ? "RESUME GAME" : "START NEW GAME";
+                int subtitleWidth = subtitle.Length * 4 * subtitleScale;
+                var startRect = GetStartButtonRect();
 
-            _textRenderer.DrawString(
-                _spriteBatch,
-                subtitle,
-                startRect.X + (startRect.Width - subtitleWidth) / 2,
-                startRect.Y + (startRect.Height - 5 * subtitleScale) / 2,
-                subtitleScale,
-                Color.White,
-                false
-            );
+                _spriteBatch.Draw(_pixel, startRect, Color.DarkGreen);
 
-            string credits = "Credits: Carlos Felipe Araujo";
-            int creditsWidth = credits.Length * 4 * textScale;
-            _textRenderer.DrawString(
-                _spriteBatch,
-                credits,
-                cx - creditsWidth / 2,
-                cy + titleScale * 16,
-                textScale,
-                Color.Gray
-            );
+                _textRenderer.DrawString(
+                    _spriteBatch,
+                    subtitle,
+                    startRect.X + (startRect.Width - subtitleWidth) / 2,
+                    startRect.Y + (startRect.Height - 5 * subtitleScale) / 2,
+                    subtitleScale,
+                    Color.White,
+                    false
+                );
+
+                string credits = "Credits: Carlos Felipe Araujo";
+                int creditsWidth = credits.Length * 4 * textScale;
+                _textRenderer.DrawString(
+                    _spriteBatch,
+                    credits,
+                    cx - creditsWidth / 2,
+                    cy + titleScale * 16,
+                    textScale,
+                    Color.Gray
+                );
+            }
         }
         else if (_isExitMenuOpen)
         {
@@ -1042,5 +1109,43 @@ public class Game1 : Game
         int h = 12 * subtitleScale;
 
         return new Rectangle(cx - w / 2, cy + titleScale * 2, w, h);
+    }
+
+    private Color[] GetSkinColors() => new[]
+    {
+        new Color(255, 219, 172), // Tone 1
+        new Color(222, 170, 128), // Tone 2 (Original)
+        new Color(141, 85, 36),   // Tone 3
+        new Color(77, 48, 22)     // Tone 4
+    };
+
+    private Rectangle[] GetSkinButtonRects()
+    {
+        int w = GraphicsDevice.Viewport.Width;
+        int h = GraphicsDevice.Viewport.Height;
+        int titleScale = Math.Max(2, h / 80);
+        int buttonSize = titleScale * 8;
+        int spacing = titleScale * 2;
+        int cy = h / 2;
+
+        var colors = GetSkinColors();
+        var rects = new Rectangle[colors.Length];
+
+        int totalWidth = colors.Length * buttonSize + (colors.Length - 1) * spacing;
+        int startX = w / 2 - totalWidth / 2;
+
+        for (int i = 0; i < colors.Length; i++)
+        {
+            rects[i] = new Rectangle(startX + i * (buttonSize + spacing), cy - buttonSize / 2, buttonSize, buttonSize);
+        }
+        return rects;
+    }
+
+    private void DrawRectOutline(Rectangle r, int t, Color color)
+    {
+        _spriteBatch.Draw(_pixel, new Rectangle(r.X, r.Y, r.Width, t), color);
+        _spriteBatch.Draw(_pixel, new Rectangle(r.X, r.Bottom - t, r.Width, t), color);
+        _spriteBatch.Draw(_pixel, new Rectangle(r.X, r.Y, t, r.Height), color);
+        _spriteBatch.Draw(_pixel, new Rectangle(r.Right - t, r.Y, t, r.Height), color);
     }
 }

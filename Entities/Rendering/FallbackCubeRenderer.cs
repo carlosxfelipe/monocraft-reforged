@@ -14,7 +14,7 @@ public class FallbackCubeRenderer
     {
         _vertices = new VertexPositionColor[8];
         Color c = Color.HotPink; // Placeholder box color
-        
+
         _vertices[0] = new VertexPositionColor(new Vector3(-0.5f, 0, -0.5f), c);
         _vertices[1] = new VertexPositionColor(new Vector3(0.5f, 0, -0.5f), c);
         _vertices[2] = new VertexPositionColor(new Vector3(0.5f, 0, 0.5f), c);
@@ -46,7 +46,7 @@ public class FallbackCubeRenderer
         bool wasVertexColorEnabled = effect.VertexColorEnabled;
         var oldRasterizer = gd.RasterizerState;
         var oldDepth = gd.DepthStencilState;
-        
+
         effect.TextureEnabled = false;
         effect.VertexColorEnabled = true;
 

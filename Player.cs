@@ -27,6 +27,9 @@ public class Player
     public float Pitch;
     public bool IsFlying;
 
+    public bool OnGround => _onGround;
+    public float HorizontalSpeed => new Vector2(_velocity.X, _velocity.Z).Length();
+
     private Vector3 _velocity;
     private bool _onGround;
     private KeyboardState _prevKeyboard;
@@ -288,10 +291,10 @@ public class Player
         int maxZ = (int)MathF.Floor(pos.Z + half);
 
         for (int x = minX; x <= maxX; x++)
-        for (int y = minY; y <= maxY; y++)
-        for (int z = minZ; z <= maxZ; z++)
-            if (_world.IsSolid(x, y, z))
-                return true;
+            for (int y = minY; y <= maxY; y++)
+                for (int z = minZ; z <= maxZ; z++)
+                    if (_world.IsSolid(x, y, z))
+                        return true;
 
         return false;
     }
